@@ -3,8 +3,6 @@ Jakiego sposobu opisywania aplikacji powinienem użyć w prompt aby w krótki, z
 
 #### Odpowiedź:
 
-Response<br><br>
-
 Oto skuteczny sposób opisywania aplikacji w promptach:<br><br>
 
 Struktura opisu aplikacji:<br>
