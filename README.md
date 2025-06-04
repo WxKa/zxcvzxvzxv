@@ -2,7 +2,7 @@
 
 ### Testujemy Anthropic Claude Sonnet 4
 
-#### Zaczynamy od początku, piewszy prompt:
+#### Zaczynamy od początku, pierwszy prompt:
 
 >> Wygeneruj aplikację do uruchomienia w streamlit, która nic nie robi.
 >>
