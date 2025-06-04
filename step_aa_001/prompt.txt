@@ -1,5 +1,5 @@
 wygeneruj aplikację do uruchomienia w streamlit,
-aplikacja składała się z trzech kolejnych ekranów,
+aplikacja składa się z trzech kolejnych ekranów,
 1. na pierwszym ekranie jest pole tekstowe z pytaniem o podanie tekstu i button potwierdzający przejście do kolejnej strony,
 2. na drugim ekranie ekranie użytkownik potwierdza to co napisał na pierwszym ekranie i dwa buttony: przejście do kolejnej strony i powrót do strony poprzedniej,
 3. na trzecim ekranie jest to co zostało potwierdzone na ekranie drugim i jeden button, powrót do pierwszej strony.
