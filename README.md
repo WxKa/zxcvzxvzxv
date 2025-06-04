@@ -17,5 +17,5 @@ import streamlit as st
 st.write("Ta aplikacja nic nie robi 🤷‍♂️")
 ```
 
-Na początek nieźle,<br>
+... jak na początek, nieźle,<br>
 ciekawe, czy da się z tego wycisnąć więcej, cdn.
