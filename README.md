@@ -1,13 +1,13 @@
 # zxcvzxvzxv
 
-###Testujemy Anthropic Claude Sonnet 4
+### Testujemy Anthropic Claude Sonnet 4
 
-####Zaczynamy od początku, piewszy prompt:
+#### Zaczynamy od początku, piewszy prompt:
 
 >> Wygeneruj aplikację do uruchomienia w streamlit, która nic nie robi.
 >>
 
-####Odpowiedź:
+#### Odpowiedź:
 
 >> Oto najprostsza aplikacja Streamlit, która "nic nie robi":
 ```python
