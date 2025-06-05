@@ -41,5 +41,6 @@ Oto zoptymalizowany prompt dla AI:
 * Użycie session state do zarządzania stanem aplikacji
 * Czytelny i responsywny interfejs użytkownika
 
-<line/>
+<br/>
+<br/>
 Ten prompt jest bardziej precyzyjny, używa terminologii zrozumiałej dla AI i jasno definiuje zarówno funkcjonalności, jak i wymagania techniczne.
