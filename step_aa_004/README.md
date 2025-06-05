@@ -1,6 +1,6 @@
 #### Pytanie:
 
-zbuduj prompt najbardziej zrozumiały dla AI zamiast tekstu:
+zbuduj prompt najbardziej zrozumiały dla AI, (ale z zachowaniem dystansu do implementacji w streamlit) zamiast tekstu:
 
 wygeneruj aplikację do uruchomienia w streamlit,
 aplikacja składa się z trzech kolejnych ekranów,
