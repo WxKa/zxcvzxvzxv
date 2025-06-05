@@ -59,9 +59,9 @@ class CodeGenerator:
 
 #### W praktyce najczęściej:
 
-1.**Używa się gotowych bibliotek** (99% przypadków)
-2. **Szablony** dla standardowych algorytmów
-3. ***Generowanie AI** dla specjalnych przypadków
-4. **Kompozycja** z mniejszych elementów
+  - **Używa się gotowych bibliotek** (99% przypadków)
+  - **Szablony** dla standardowych algorytmów
+  - ***Generowanie AI** dla specjalnych przypadków
+  - **Kompozycja** z mniejszych elementów
 
 Nowoczesne generatory kodu rzadko "wymyślają" algorytmy od zera - raczej adaptują sprawdzone rozwiązania do konkretnego kontekstu.
