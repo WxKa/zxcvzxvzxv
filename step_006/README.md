@@ -26,7 +26,7 @@ ZWRÓĆ posortowaną listę
 - Funkcja powinna działać z listą słowników gdzie każdy użytkownik to {'nazwa': str, 'wiek': int}
 
 
-#### Wygenerowany kod Python:
+### Wygenerowany kod Python:
 ```python
 def sortuj_uzytkownikow(lista_uzytkownikow):
     # Walidacja czy parametr to lista
