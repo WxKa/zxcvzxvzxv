@@ -20,7 +20,7 @@ Oto szczegółowy prompt dla AI:
 * Framework: Streamlit
 * Nawigacja: Używaj st.session_state do zarządzania stanem między stronami
 
-**STRUKTURA APLIKACJI:**
+**STRUKTURA APLIKACJI:**<br>
 **STRONA 1 - Wprowadzanie danych**
 
 * Tytuł strony: wyraźnie oznacz jako pierwszą stronę
