@@ -13,7 +13,7 @@ W szczegółach opanujesz:
 
 2. Jak w Exploratorze Windows przełączyć, żeby pojawiały się rozszerzenia plików,
 
-3. Na podstawie załączonej pod tym video pełnej specyfikacji aplikacji, którą właśnie chesz stworzyć,
+3. Na podstawie załączonej pod tym video pełnej specyfikacji aplikacji, którą właśnie chcesz stworzyć,
    tu po prostu skopiuj ją i wklej, 
 
    Tu powiem Ci jeszcze, że do opracowania takiej specyfikacji najlepiej użyć innego AI np. ChatGPT albo Gemini bo lepiej się do tego nadają.
