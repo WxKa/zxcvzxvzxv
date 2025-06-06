@@ -15,6 +15,12 @@ Please upgrade to a paid plan to use these models.
 
 czyli znowu klikamy w aplikacji cursor w górnym prawym rogu w ikonkę ❌.
 
+ale, może nie,
+
+a z claude-3.7-sonnet ....
+
+działa !!!
+
 ### Pytanie:
 
 Jakie poleciłbyś narzędzie dostępne w web online lub do pobrania i zainstalowania **np.** z GitHub do zbudowania niedużej aplikacji np. w streamlit w oparciu WYŁĄCZNIE o kod generowany przez Anthropic Claude Sonet 4, nie chodzi tu o narzędzia wspierające prace mozolnie klepiących kod programistów, chodzi o generowanie aplikacji wyłącznie na podstawie promptów dla Anthropic Claude Sonet 4, nie interesuje mnie też wsparcie do uruchamiania/debuggowania i testowania tego kodu, chodzi jedynie o wsparcie procesu
