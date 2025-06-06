@@ -11,7 +11,7 @@ W szczegółach opanujesz:
 
 1. Jak w systemie Windows uruchomić wiersz poleceń w trybie administratora,
 
-2. Jak w Exploratorze Windows przełączyć, żeby pojawiały się rozserzenia plików,
+2. Jak w Exploratorze Windows przełączyć, żeby pojawiały się rozszerzenia plików,
 
 3. Na podstawie załączonej pod tym video pełnej specyfikacji aplikacji, którą właśnie chesz stworzyć,
    tu po prostu skopiuj ją i wklej, 
@@ -20,6 +20,6 @@ W szczegółach opanujesz:
 
    A teraz skopiuj poniższy zestaw poleceń i wkopiuj do wiersza poleceń Windows.
 
-4. Na koniec dowiesz się, jak w Exploratorze Windows odnaleźć katalog Download, na który Twoja nowo zbudowana aplikacja ściąga pliki mg4 i mpg3.
+4. Na koniec dowiesz się, jak w Exploratorze Windows odnaleźć katalog Download, na który Twoja nowo zbudowana aplikacja ściąga pliki mp4 i mp3.
 
 No jestem pod wrażeniem, chodzę teraz po mieszkaniu i zastanawiam się, czy przypadkiem nie przeszedłem przez jakieś niewidoczne drzwi i teraz cieżko mi wrócić tam gdzie byłem przedtem.
