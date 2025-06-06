@@ -42,3 +42,18 @@ https://github.com/AntonOsika/gpt-engineer
 - **Cursor IDE** - najprostsze w użyciu, bezpośrednia integracja, bez konieczności instalacji. Wystarczy wpisać prompt opisujący aplikację, a Claude wygeneruje - - kompletny kod Streamlit.
 
 Którego typu rozwiązanie preferujesz - webowe czy do instalacji?
+
+
+
+Postanowiłem zacząć od Cursor
+
+staciłem już 2h żeby znaleźć Composer w cursor 1.0.0. pod linuxem,
+podobno ma się otwierać na Ctrl-I, ale w tym panelu pokazuje się tylko Chat
+czytam dalej w web, że 
+
+Cursor Composer is not a free feature in Cursor.
+While Cursor offers a free plan, Composer is a Pro subscription feature. 
+
+wchodzę na upgrade do Pro i widzę $20/month
+
+więc cursor na razie odpuszczam.
