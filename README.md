@@ -1,6 +1,8 @@
 # zxcvzxvzxv
 
-### Testujemy Anthropic Claude Sonnet 4
+### To nie tej strony szukałeś, coś pokręciłeś ...
+
+Jeśli trafiłeś tu z jakiejś wyszukiwarki to zgłoś błąd.
 
 #### Zaczynamy od początku, pierwszy prompt:
 
