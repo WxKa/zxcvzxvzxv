@@ -1,6 +1,9 @@
-errata:
-  pytanie to zostało zadane niewłaściwemu AI, tj, Anthropic Claude Sonet 4, który ma odcięcie (tak to się mówi) w kwietniu 2024 r. czyli ma lekko nieaktualną wiedzę
-  i nie jest najlepszy w tego typu pytaniach, więc pytanie o narzędzia trzeba zadać AI, która ma najpóźniejsze odcięcie i dodatkowo korzysta z aktualnej wiedzy z internentu i jest aktualnie najlepsza, czyli mowa tu raczej o ChatGPT i Gemini.
+
+przeprosiłem się z cursorem,
+
+Cursor zintegrował funkcje "Composer" z głównym interfejsem czatu AI.
+
+Oznacza to, że to, co wcześniej było dostępne w "Composerze" (np. generowanie i edytowanie wielu plików, tryby "Agent" i "Edit"), jest teraz dostępne bezpośrednio w oknie czatu AI.
 
 ### Pytanie:
 
@@ -46,18 +49,3 @@ https://github.com/AntonOsika/gpt-engineer
 - **Cursor IDE** - najprostsze w użyciu, bezpośrednia integracja, bez konieczności instalacji. Wystarczy wpisać prompt opisujący aplikację, a Claude wygeneruje - - kompletny kod Streamlit.
 
 Którego typu rozwiązanie preferujesz - webowe czy do instalacji?
-
-
-
-Postanowiłem zacząć od Cursor
-
-staciłem już 2h żeby znaleźć Composer w cursor 1.0.0. pod linuxem,
-podobno ma się otwierać na Ctrl-I, ale w tym panelu pokazuje się tylko Chat
-czytam dalej w web, że 
-
-Cursor Composer is not a free feature in Cursor.
-While Cursor offers a free plan, Composer is a Pro subscription feature. 
-
-wchodzę na upgrade do Pro i widzę $20/month
-
-więc cursor na razie odpuszczam.
