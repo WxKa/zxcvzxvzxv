@@ -22,4 +22,4 @@ W szczegółach opanujesz:
 
 4. Na koniec dowiesz się, jak w Exploratorze Windows odnaleźć katalog Download, na który Twoja nowo zbudowana aplikacja ściąga pliki mg4 i mpg3.
 
-No jestem pod wrażeniem, chodzę teraz po mieszkaniu i zastanawiam się, czy przypadkiem nie przeszedłem przez jakieś niwidoczne drzwi i teraz cieżko mi wrócić tam gdzie byłem przedtem.
+No jestem pod wrażeniem, chodzę teraz po mieszkaniu i zastanawiam się, czy przypadkiem nie przeszedłem przez jakieś niewidoczne drzwi i teraz cieżko mi wrócić tam gdzie byłem przedtem.
