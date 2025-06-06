@@ -5,7 +5,7 @@ Miesiąc temu pojawił się nowy termin vibe coding, czyli programowanie bez pis
 
 Oglądałem pierwsze video, poniżej streszczenie.
 
-W tym materiale dowiesz się jak w prosty sposób i w krótkim czasie stworzyć kompletną, działającą aplikację za pomocą Claude Sennet 4, bez pisania ani jednej linii kodu.
+W tym materiale dowiesz się jak w prosty sposób i w krótkim czasie stworzyć kompletną, działającą aplikację za pomocą Claude Sonnet 4, bez pisania ani jednej linii kodu.
 
 W szczegółach opanujesz:
 
