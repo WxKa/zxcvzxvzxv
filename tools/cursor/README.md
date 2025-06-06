@@ -12,3 +12,5 @@ This is especially powerful for data scientists, researchers, and machine learni
 Currently, this feature is available for users running Sonnet models, which are optimized for advanced reasoning and long-context understanding.
 
 To use it, just open your notebook in Cursor, and the AI will start assisting you wherever it sees opportunities — whether it’s rewriting inefficient code, generating plots, or suggesting improvements.
+
+https://www.youtube.com/watch?v=mj187R4oUuM
