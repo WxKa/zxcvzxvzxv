@@ -1,4 +1,5 @@
 
+#### Anthropic Claude 3.7 Sonnet 
 ### prompt:
 
 - opracuj prompt, który wygeneruje aplikację zbliżoną funkcjonalnością do app.py,
