@@ -20,6 +20,6 @@ W szczegółach opanujesz:
 
    A teraz skopiuj poniższy zestaw poleceń i wkopiuj do wiersza poleceń Windows.
 
-4. Na koniec dowiesz się, jak w Exploratorze Windows odnaleźć katalog Download, na który Twoja nowo zbudowana aplikacja ściąga pliki mp4 i mp3.
+4. Na koniec dowiesz się, jak w Exploratorze Windows odnaleźć katalog Downloads, na który Twoja nowo zbudowana aplikacja ściąga pliki mp4 i mp3.
 
 No jestem pod wrażeniem, chodzę teraz po mieszkaniu i zastanawiam się, czy przypadkiem nie przeszedłem przez jakieś niewidoczne drzwi i teraz cieżko mi wrócić tam gdzie byłem przedtem.
