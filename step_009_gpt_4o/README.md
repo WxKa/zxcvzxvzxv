@@ -408,6 +408,7 @@ Provide a back button to return to the initial input setup.
 This structure will help guide the generation of an application that retains key functional elements you've described, using Streamlit and external integrations efficiently.
 
 
+------------------
 
 nie będę tego na razie formatował, ale tak to ja też potrafię:
 
