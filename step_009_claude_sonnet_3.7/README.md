@@ -3,7 +3,7 @@
 
 ### prompt:
 
-- opracuj prompt, który wygeneruje aplikację zbliżoną funkcjonalnością do app.py,
+- opracój prompt, który wygeneruje aplikację zbliżoną funkcjonalnością do app.py,
 - nie jest wymagana zgodność styli ani treści komentarzy i przycisków,
 - kluczowa jest logika
 
