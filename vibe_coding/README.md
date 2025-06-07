@@ -1,7 +1,7 @@
 
 Ale trafiłem w moment !!!!
 
-Miesiąc temu pojawił się nowy termin vibe coding, czyli programowanie bez pisania kodu.
+Miesiąc temu pojawił się nowy termin vibe coding, czyli programowanie za pomocą promptów.
 
 Oglądałem pierwsze video, poniżej streszczenie.
 
