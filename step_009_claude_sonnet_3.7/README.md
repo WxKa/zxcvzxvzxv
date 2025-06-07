@@ -1,5 +1,6 @@
 
 #### Anthropic Claude 3.7 Sonnet 
+
 ### prompt:
 
 - opracuj prompt, który wygeneruje aplikację zbliżoną funkcjonalnością do app.py,
@@ -43,11 +44,3 @@ Stwórz aplikację Streamlit do prognozowania czasu w półmaratonie na podstawi
 10. Zawierać system nawigacji między stronami i zarządzania historią zapytań.
 
 Aplikacja powinna być zorganizowana w sposób modułowy, z funkcjami do obsługi poszczególnych zadań, i wykorzystywać stan sesji Streamlit do przechowywania danych między interakcjami.
-
-----------
-
-Dziękuję, pozamiatane, prompt już jest,
-
-ale, ale,
-
-a gdzie program ?
