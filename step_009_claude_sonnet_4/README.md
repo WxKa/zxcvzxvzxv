@@ -1,8 +1,11 @@
 ### Anthropic Claude Sonnet 4
+#### prompt:
 
 - utwórz prompt, który wygeneruje aplikację zbliżoną do poniższej,
 - nie jest istotna zgodność styli, treści komentarzy i przycisków,
 - ważna jest logika aplikacji
+
+#### odzew:
 
 Utwórz aplikację Streamlit do przewidywania czasu w półmaratonie z następującą logiką:
 
