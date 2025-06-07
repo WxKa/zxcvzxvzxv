@@ -1,3 +1,5 @@
+gpt-4o
+
 utwórz prompt, który wygeneruje aplikację zbliżoną do poniższej, nie jest wymagana zgodność styli, treści komentarzy, przycisków, ważna jest logika aplikacji
 
 import streamlit as st import pandas as pd import json import os import re from datetime import datetime, timedelta from dataclasses import dataclass from typing import Dict, Any from dotenv import load_dotenv import matplotlib.pyplot as plt from pathlib import Path import seaborn as sns from langfuse.decorators import observe from langfuse.openai import OpenAI import boto3 from pycaret.regression import load_model, predict_model

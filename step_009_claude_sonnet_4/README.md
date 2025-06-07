@@ -1,3 +1,4 @@
+Anthropic Claude Sonnet 4
 
 - utwórz prompt, który wygeneruje aplikację zbliżoną do poniższej,
 - nie jest istotna zgodność styli, treści komentarzy i przycisków,
