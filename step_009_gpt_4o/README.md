@@ -1,5 +1,5 @@
 tu był mój błąd, bo nie zorientowałem się, co jest pytaniem co odpowiedzią i w odpowiedzi uwzględniłem też pytanie,
-dlatego o charGPT będzie jeszcze raz,
+dlatego o chatGPT będzie jeszcze raz,
 
 ###### NaszGPT
 
