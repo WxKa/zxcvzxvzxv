@@ -1,3 +1,4 @@
+###### Anthropic Console
 #### Pytanie:
 
 zbuduj prompt najbardziej zrozumiały dla AI, (ale z zachowaniem dystansu do implementacji w streamlit) zamiast tekstu:

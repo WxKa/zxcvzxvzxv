@@ -1,3 +1,4 @@
+###### Anthropic Console
 #### Pytanie:
 Jakiego sposobu opisywania aplikacji powinienem użyć w prompt aby w krótki, zwięzły sposób definiować aplikację do zbudowania.
 

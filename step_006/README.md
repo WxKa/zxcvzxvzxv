@@ -1,3 +1,5 @@
+
+###### Anthropic Console
 ### Pytanie:
 
 podaj przykład użycia pseudo kodu, pomiędzy językiem naturalnym w przykładowym prompt do generowania kodu

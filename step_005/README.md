@@ -1,3 +1,4 @@
+###### Anthropic Console
 #### Pytanie:
 
 jakie są sposoby komunikowania się z (informowania) AI, jaki software ma napisać, odpowiedz w kategoriach: np. opis w języku naturalnym → kod programu
