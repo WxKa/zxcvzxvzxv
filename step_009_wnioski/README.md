@@ -10,7 +10,7 @@
 - od podejścia zgrubnego, które widać w **claude_sonnet_3.7**,
 - przez trochę bardziej szczegółowe, ale bez przesady w **claude_sonnet_4**,
 - do najciekawiej wyglądającego w **gemini-2.5-flash**, możnaby tu nawet pokusić się o uznanie 80% tego co chcemy uzyskać,
-- jeszcze fajniejszy wydaje się **gemini-2.5-pro**, bo jest jeszcze dłuższy i wiadomo, że pro to nie to co flash, więc na razie ten wygrywa,
+- natomiast **gemini-2.5-pro** wyprodukowało coś, co jest bardziej abstrakcyjne niż flash i nie prowadzi do szybkiego zakończenia odtwarzania tej aplikacji: to jest na minus,
 - **gpt-4o** na nowo, odpowiedź była przeze mnie źle zinterpretowana, i po aktualizacji, tak jednym słowem, to jest mocno zgeneralizowana.
 
 #### 3. Patrząc ogólnie na wszystkie 5 wygenerowanych promptów wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość.
