@@ -13,7 +13,7 @@ utwórz prompt, który wygeneruje aplikację zbliżoną do poniższej, nie jest 
 
 Utwórz monit, aby wygenerować aplikację Streamlit o funkcjonalności podobnej do opisanej, skupiając się na podstawowej logice i operacjach, a pomijając konkretny styl, etykiety przycisków lub zawartość tekstową:
 
-*i tu już trzeba uważać, bo to jest chyba potwórzone pytanie*
+*i tu już trzeba uważać, bo to wgląda na powtórzone pytanie*
 
 Stwórz aplikację Streamlit posiadającą następujące kluczowe funkcjonalności:
 
