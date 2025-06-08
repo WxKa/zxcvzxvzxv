@@ -1,4 +1,4 @@
-
+###### cursor / Chat
 #### Anthropic Claude 3.7 Sonnet 
 
 ### prompt:
