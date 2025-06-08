@@ -10,8 +10,9 @@
 - od podejścia zgrubnego, które widać w **claude_sonnet_3.7**,
 - przez trochę bardziej szczegółowe, ale bez przesady w **claude_sonnet_4**,
 - do najciekawiej wyglądającego w **gemini-2.5-flash**, możnaby tu nawet pokusić się o uznanie 80% tego co chcemy uzyskać,
+- jeszcze fajniejszy wydaje się **gemini-2.5-pro**, bo jest jeszcze dłuższy i wiadomo, że pro to nie to co flash, więc na razie ten wygrywa,
 - i być może dającego najbardziej zbliżone rozwiązanie do oryginału ale nie generalizującego w **gpt-4o**, co na obecnym etapie rozważań nie jest mile widziane.
 
-#### 3. Patrząc ogólnie na wszystkie 4 wygenerowane prompty wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość.
+#### 3. Patrząc ogólnie na wszystkie 5 wygenerowanych promptów wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość.
 
 #### 4. Możnaby na tym etapie pokusić się już o ręczne przygotowanie promptu, który chcemy uzyskać, ale co nagle to po diable, poczekajmy jeszcze, może coś nas w tym jeszcze wyręczy.
