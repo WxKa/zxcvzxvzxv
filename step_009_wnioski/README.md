@@ -13,6 +13,4 @@
 - natomiast **gemini-2.5-pro** wyprodukowało coś, co jest bardziej abstrakcyjne niż flash, ale po dodaniu zachowaj nazwy zasobów zewnętrzych trochę się poprawiło,
 - **gpt-4o** na nowo, odpowiedź była przeze mnie źle zinterpretowana, i po aktualizacji, tak jednym słowem, to jest mocno zgeneralizowana.
 
-##### 3. Patrząc ogólnie na wszystkie 5 wygenerowanych promptów wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość.
-
-##### 4. Możnaby na tym etapie pokusić się już o ręczne przygotowanie promptu, który chcemy uzyskać, ale po co ten pośpiech.
+##### 3. Patrząc ogólnie na wszystkie 5 wygenerowanych promptów wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość, to wyjdzie w następnym kroku.
