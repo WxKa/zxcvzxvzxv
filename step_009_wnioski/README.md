@@ -15,4 +15,4 @@
 
 ##### 3. Patrząc ogólnie na wszystkie 5 wygenerowanych promptów wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość.
 
-##### 4. Możnaby na tym etapie pokusić się już o ręczne przygotowanie promptu, który chcemy uzyskać, ale co nagle to po diable, a na lepienie z gliny imitacji tego, co chcielibyśmy żeby było realne i prawdziwe, co ludzkości najlepiej wychodzi od tysięcy lat, zawsze bądzie czas.
+##### 4. Możnaby na tym etapie pokusić się już o ręczne przygotowanie promptu, który chcemy uzyskać, ale po co ten pośpiech.
