@@ -1,6 +1,8 @@
 
 ###### Anthropic Claude Sonnet 4
 
+źródło: gemini-2.5-flash
+
 kod się wygenerował, ale szału nie ma,
 
 ##### pierwsze problemy jakie się pojawiły od razu to:
