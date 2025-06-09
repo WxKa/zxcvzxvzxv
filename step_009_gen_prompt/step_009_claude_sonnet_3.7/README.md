@@ -7,7 +7,7 @@
 - nie jest wymagana zgodność styli ani treści komentarzy i przycisków,
 - kluczowa jest logika
 
-### odzew:
+### odpowiedź:
 
 Stwórz aplikację Streamlit do prognozowania czasu w półmaratonie na podstawie danych użytkownika. Aplikacja powinna:
 

@@ -6,7 +6,7 @@
 - nie jest istotna zgodność styli, treści komentarzy i przycisków,
 - ważna jest logika aplikacji
 
-#### odzew:
+#### odpowiedź:
 
 Utwórz aplikację Streamlit do przewidywania czasu w półmaratonie z następującą logiką:
 

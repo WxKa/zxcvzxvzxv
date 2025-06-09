@@ -8,7 +8,7 @@
 - nie jest wymagana zgodność styli, komentarzy i przycisków,
 - ważna jest logika aplikacji,
 - zachowaj nazwy zasobów zewnętrznych
-#### odzew:
+#### odpowiedź:
 
 Oto prompt, który precyzyjnie opisuje logikę działania aplikacji, zachowując nazwy zasobów zewnętrznych, zgodnie z Twoją prośbą.
 

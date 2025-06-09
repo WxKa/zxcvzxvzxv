@@ -15,5 +15,3 @@
 ##### żeby działało, i żeby nie przedłużać, zrobiłem poprawki na żywca:
 - do S3 i tak dopisał credentiale więc kasujemy,
 - zmieniłem odwołania do kolumny za pomocą 'time_sec' na 'finish_sec', bo tak ją nazwałem w swoim w csv,
-
-###### cenzura.

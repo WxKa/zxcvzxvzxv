@@ -9,7 +9,7 @@ nie jest wymagana zgodność styli, komentarzy i przycisków,
 
 ważna jest logika aplikacji
 
-### odzew:
+### odpowiedź:
 
 Twoje zapytanie dotyczy stworzenia promptu dla aplikacji opartej na Streamlit, która ma na celu **prognozowanie czasu ukończenia półmaratonu na podstawie danych biegacza**, takich jak wiek, płeć oraz czas lub tempo na 5 km. Aplikacja powinna również wizualizować przewidywane miejsce biegacza w odniesieniu do wyników z poprzednich lat.
 

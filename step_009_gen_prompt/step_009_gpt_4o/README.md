@@ -6,7 +6,7 @@
 
 utwórz prompt, który wygeneruje aplikację zbliżoną do poniższej, nie jest wymagana zgodność styli, treści komentarzy, przycisków, ważna jest logika aplikacji
 
-### odzew:
+### odpowiedź:
 
 Utwórz monit, aby wygenerować aplikację Streamlit o funkcjonalności podobnej do opisanej, skupiając się na podstawowej logice i operacjach, a pomijając konkretny styl, etykiety przycisków lub zawartość tekstową:
 
