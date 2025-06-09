@@ -11,6 +11,6 @@
 - przez trochę bardziej szczegółowe, ale bez przesady w **claude_sonnet_4**,
 - do najciekawiej wyglądającego w **gemini-2.5-flash**, możnaby tu nawet pokusić się o uznanie 80% tego co chcemy uzyskać,
 - natomiast **gemini-2.5-pro** wyprodukowało coś, co jest bardziej abstrakcyjne niż flash, ale po dodaniu zachowaj nazwy zasobów zewnętrzych trochę się poprawiło,
-- **gpt-4o** na nowo, odpowiedź była przeze mnie źle zinterpretowana, i po aktualizacji, tak jednym słowem, to jest mocno zgeneralizowana.
+- **gpt-4o** tak jednym słowem, odpowiedź jest mocno zgeneralizowana, ale nie wiem czy to nie z powodu system: odpowiadaj zwięźle.
 
 ##### 3. Patrząc ogólnie na wszystkie 5 wygenerowanych promptów wiemy mniej więcej jak taki prompt powinien wyglądać, nie wiemy jednak do końca jaką powinien mieć szczegółowość, to wyjdzie w następnym kroku.
