@@ -1,6 +1,3 @@
-tu był mój błąd, bo nie zorientowałem się, co jest pytaniem co odpowiedzią i w odpowiedzi uwzględniłem też pytanie,
-dlatego o chatGPT będzie jeszcze raz,
-
 ###### NaszGPT
 
 ### gpt-4o
@@ -13,7 +10,7 @@ utwórz prompt, który wygeneruje aplikację zbliżoną do poniższej, nie jest 
 
 Utwórz monit, aby wygenerować aplikację Streamlit o funkcjonalności podobnej do opisanej, skupiając się na podstawowej logice i operacjach, a pomijając konkretny styl, etykiety przycisków lub zawartość tekstową:
 
-*i tu już trzeba uważać, bo to wgląda na powtórzone pytanie*
+*i tu już trzeba uważać, bo tu jest powtórzone pytanie*
 
 Stwórz aplikację Streamlit posiadającą następujące kluczowe funkcjonalności:
 
