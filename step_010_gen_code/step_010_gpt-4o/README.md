@@ -1,5 +1,5 @@
 
-###### ChatGPT
+###### NaszGPT
 
 źródło: gemini-2.5-flash
 
