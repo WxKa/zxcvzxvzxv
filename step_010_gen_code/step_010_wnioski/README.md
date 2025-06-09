@@ -1,4 +1,8 @@
 
-Wyniki przeszły najśmielsze oczekiwania, zarówno **Anthropic Claude Sonnet 4** jak i **Google Gemini 2.5 Pro** generują perfekcyjne kody dla prostych aplikacji streamlit.
+Wyniki przeszły najśmielsze oczekiwania, zarówno
+ - **Anthropic Claude Sonnet 4** jak i
+ - **Google Gemini 2.5 Pro**
+generują perfekcyjne kody dla prostych aplikacji streamlit.
 
-Ale żeby było sprawiedliwie damy szansę wykazać się jeszcze gpt-4o, na zasadzie 'Co tam słychać w Państwie - Panie Prezydencie ?
+Natomiast **gpt-o4** też generuje, inteligentny, schludny, kod i po drobnych poprawkach nawet to działa.
+- Ale wygląd jest raczej mizerny, gdyż nie używa designerskich styli, co w dzisiejszych realiach świadczy na jego niekorzyść.
