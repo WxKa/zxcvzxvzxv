@@ -1,21 +1,18 @@
 
-###### Anthropic Claude Sonnet 4
+###### Anthropic Console
 
 źródło: gemini-2.5-flash
 
-kod się wygenerował, ale szału nie ma,
+* w prompt trzeba dopisać, że:
+ - python 3.11
+ - csv sep =';'
+ - nie dopisuj credentials do s3 client create
 
-##### pierwsze problemy jakie się pojawiły od razu to:
+##### kod się wygenerował i jest **BARDZO DOBRZE**
 
-- pokazuje się pierwsza strona i na początku jest wrażenie, że coś działa,
-- przy przejściu na drugą stronę, drobiazg: brak sprawdzenia, czy result['error'] nie jest przypadkiem None,
-- inna konstrukcja system: user: prompta i brak explicite, że odpowiedzią jest json, czyli trzeba narzucić z góry jak ma być zbudowany klient do gpt,
-- pomieszało mu się, kiedy ma być dodana końcówka .pkl a kiedy nie, przy ładowaniu modelu,
-- zamiast przyjąć, że w csv są kolumny finish_sec i age to je próbuje odszukać na zasadzie substringów, bezskutecznie, cała pętelka do usunięcia,
-- to nad czym teraz siedzę, to zastosowanie get_object przy pobieraniu csv z s3 i prawdopodobnie w resulcie nie jest to DataFrame,
--
--
-- we wszystkich akcjach w necie, po takim wygenerowaniu kodu z promptu autorzy prześcigali się w dopowiadaniu sonnetowi kolejnymi podpromptami co poprawić, żeby zadziałało, i w mig odgadywali co jest nie tak np. endpoint nie działa, bo zapytanie jest małymi literami a endpoint ma dużą literę i trzeba go skorygować - no przecież to oczywiste, że tak może być i należy na to zwrócić uwagę nawet jeszcze przed ochroną na None, to takie proste, itd, itd.
--
--
-- dlatego niestety, na tym etapie trzeba ten kod doprowadzić do działania ręcznie,
+##### żeby działało, i żeby nie przedłużać, zrobiłem poprawki na żywca w wygenerownym app.py:
+- do prompta do gpt dodałem:
+     response_format={"type": "json_object"},
+- zmieniłem odwołania do kolumny za pomocą 'time_seconds' na 'finish_sec', bo tak ją nazwałem w swoim w csv,
+    * i widzę, że mam jakieś nieodebrane połączenie .... czytam w nieodebranych ... finish_sec to możesz napisać sobie w toalecie .... tam gdzie ....
+    -- no nie będę tego kończył... , poprawię to, zmienię na time_seconds żeby następnym razem się mnie nie czepiali.

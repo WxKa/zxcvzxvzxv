@@ -1,46 +1,40 @@
-a może skoro to gemini wygenerowało tego prompta, to niech samo go wykona,
-dlaczego inne AI mają się z tym męczyć, niech każdy sam radzi sobie ze swoimi problemami:
-
-###### Google AI Studio
-
-źródło: gemini 2.5 flash
-
-##### Gemini 2.5 Pro
-
-Jasne, oto kompletna implementacja aplikacji Streamlit do prognozowania czasu w półmaratonie, zgodna z podanymi wymaganiami.
+Jasne, oto kompletna implementacja aplikacji Streamlit do prognozowania czasu w półmaratonie, zgodnie z podanymi wytycznymi. Aplikacja jest podzielona na logiczne moduły, aby zachować czytelność i łatwość w zarządzaniu kodem.
 
 ### Struktura projektu
 
-Aby uruchomić aplikację, potrzebujesz następującej struktury plików:
+Sugerowana struktura plików wygląda następująco:
 
 ```
 .
-├── .env
-├── app.py
-├── requirements.txt
-└── utils.py
+├── .env                  # Plik ze zmiennymi środowiskowymi
+├── app.py                # Główny plik aplikacji Streamlit
+├── llm_parser.py         # Moduł do parsowania danych przez LLM
+├── requirements.txt      # Zależności projektu
+├── s3_utils.py           # Narzędzia do obsługi S3
+└── utils.py              # Funkcje pomocnicze (np. konwersja czasu)
 ```
 
-**1. Plik `.env`:**
+### Krok 1: Plik `.env`
 
-Ten plik przechowuje wrażliwe dane. Pamiętaj, aby nigdy nie udostępniać go publicznie.
+Utwórz plik `.env` w głównym katalogu projektu i umieść w nim swoje klucze.
 
 ```ini
 # .env
 OPENAI_API_KEY="sk-..."
+LANGFUSE_SECRET_KEY="sk-lf-..."
+LANGFUSE_PUBLIC_KEY="pk-lf-..."
 AWS_ACCESS_KEY_ID="your_aws_access_key"
 AWS_SECRET_ACCESS_KEY="your_aws_secret_key"
-AWS_REGION="eu-central-1"  # lub inny region S3
+AWS_REGION="eu-central-1" # lub inny region, w którym jest bucket
 ```
 
-**2. Plik `requirements.txt`:**
-
-Plik z listą wszystkich zależności. Zainstaluj je za pomocą `pip install -r requirements.txt`.
+### Krok 2: Plik `requirements.txt`
 
 ```text
 # requirements.txt
 streamlit
 pandas
+numpy
 boto3
 pycaret[full]
 langfuse
@@ -50,127 +44,256 @@ matplotlib
 seaborn
 ```
 
-**3. Plik `utils.py`:**
+Zainstaluj zależności: `pip install -r requirements.txt`
 
-Plik pomocniczy z funkcjami do konwersji czasu, stylizacji CSS i innymi.
+### Krok 3: Kod źródłowy
+
+#### Plik `s3_utils.py`
+
+Ten moduł będzie zawierał funkcje do interakcji z Amazon S3. Użycie `@st.cache_data` jest kluczowe dla wydajności.
 
 ```python
-# utils.py
-import re
-import streamlit as st
+# s3_utils.py
+import os
 import pandas as pd
-from datetime import timedelta
+import streamlit as st
+import boto3
+from botocore.exceptions import NoCredentialsError, ClientError
+from pycaret.regression import load_model
+from dotenv import load_dotenv
 
-def better_styling_css():
-    """Aplikuje niestandardowe style CSS do aplikacji Streamlit."""
-    st.markdown("""
-        <style>
-            .stTabs [data-baseweb="tab-list"] {
-                gap: 24px;
-            }
-            .stTabs [data-baseweb="tab"] {
-                height: 50px;
-                white-space: pre-wrap;
-                background-color: #F0F2F6;
-                border-radius: 4px 4px 0px 0px;
-                gap: 1px;
-                padding-top: 10px;
-                padding-bottom: 10px;
-            }
-            .stTabs [aria-selected="true"] {
-                background-color: #FFFFFF;
-            }
-        </style>""", unsafe_allow_html=True)
+# Załaduj zmienne środowiskowe
+load_dotenv()
 
-def parse_time_to_seconds(time_str: str) -> int | None:
-    """Parsuje czas w formacie MM:SS, M:SS, MM'SS'' do sekund."""
-    time_str = time_str.replace("'", "").replace('"', '')
-    parts = re.split(r'[:]', time_str)
+# Konfiguracja klienta BOTO3
+S3_BUCKET = "wk1"
+
+@st.cache_resource
+def get_s3_client():
+    """Tworzy i zwraca klienta S3, cachowane dla całej sesji."""
     try:
-        if len(parts) == 2:
-            minutes = int(parts[0])
-            seconds = int(parts[1])
-            return minutes * 60 + seconds
-        elif len(parts) == 1:
-            return int(parts[0]) # Zakładamy, że to sekundy
-    except (ValueError, IndexError):
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+            region_name=os.getenv("AWS_REGION", "eu-central-1")
+        )
+        # Sprawdzenie połączenia poprzez listowanie bucketów
+        s3_client.list_buckets()
+        return s3_client
+    except (NoCredentialsError, ClientError) as e:
+        st.error(f"Błąd konfiguracji AWS S3: Nie można połączyć się z S3. Sprawdź swoje klucze dostępu w pliku .env. Błąd: {e}")
         return None
-    return None
 
-def seconds_to_hms(seconds: int) -> str:
-    """Konwertuje sekundy na format HH:MM:SS."""
-    return str(timedelta(seconds=int(seconds)))
+@st.cache_data(ttl=3600)  # Cache na 1 godzinę
+def load_csv_from_s3(_s3_client, file_key: str) -> pd.DataFrame | None:
+    """Ładuje plik CSV z S3 do ramki danych Pandas."""
+    if not _s3_client:
+        return None
+    try:
+        obj = _s3_client.get_object(Bucket=S3_BUCKET, Key=file_key)
+        return pd.read_csv(obj['Body'])
+    except ClientError as e:
+        st.error(f"Błąd podczas pobierania pliku CSV z S3 ('{file_key}'): {e}")
+        return None
+    except Exception as e:
+        st.error(f"Wystąpił nieoczekiwany błąd podczas przetwarzania pliku CSV: {e}")
+        return None
 
-def seconds_to_ms(seconds: int) -> str:
-    """Konwertuje sekundy na format MM:SS."""
-    td = timedelta(seconds=int(seconds))
-    minutes = (td.seconds // 60) % 60
-    secs = td.seconds % 60
-    return f"{minutes:02d}:{secs:02d}"
+@st.cache_data(ttl=3600) # Cache na 1 godzinę
+def download_model_from_s3(_s3_client, file_key: str, local_path: str):
+    """Pobiera plik modelu z S3 i zapisuje go lokalnie."""
+    if not _s3_client:
+        return False
+    try:
+        _s3_client.download_file(S3_BUCKET, file_key, local_path)
+        return True
+    except ClientError as e:
+        st.error(f"Błąd podczas pobierania modelu z S3 ('{file_key}'): {e}")
+        return False
 
-def generate_pace_conversion_table() -> pd.DataFrame:
-    """Generuje tabelę konwersji tempa na prędkość."""
-    paces = []
-    for minutes in range(3, 11):
-        for seconds in range(0, 60, 5):
-            total_seconds_per_km = minutes * 60 + seconds
-            speed_kmh = 3600 / total_seconds_per_km
-            pace_str = f"{minutes}:{seconds:02d}"
-            paces.append({"Tempo (min/km)": pace_str, "Prędkość (km/h)": f"{speed_kmh:.2f}"})
-    return pd.DataFrame(paces)
+@st.cache_resource
+def get_prediction_model():
+    """Ładuje model PyCaret, pobierając go z S3 w razie potrzeby."""
+    s3_client = get_s3_client()
+    if not s3_client:
+        return None
+
+    model_s3_key = "zadanie_9/models/time_sec_model"
+    local_model_path = "time_sec_model"
+
+    if not os.path.exists(f"{local_model_path}.pkl"):
+        st.info("Model nie został znaleziony lokalnie. Pobieranie z S3...")
+        with st.spinner("Pobieranie modelu..."):
+            if not download_model_from_s3(s3_client, f"{model_s3_key}.pkl", f"{local_model_path}.pkl"):
+                return None
+    
+    try:
+        model = load_model(local_model_path)
+        return model
+    except Exception as e:
+        st.error(f"Nie udało się załadować modelu PyCaret. Błąd: {e}")
+        return None
 
 ```
 
-**4. Główny plik aplikacji `app.py`:**
+#### Plik `llm_parser.py`
 
-To jest serce naszej aplikacji. Zawiera logikę dla wszystkich trzech widoków, obsługę stanu i interakcje z zewnętrznymi usługami (OpenAI, S3).
+Moduł odpowiedzialny za ekstrakcję danych z tekstu użytkownika przy użyciu GPT.
 
 ```python
-# app.py
+# llm_parser.py
 import os
 import json
 import re
-import streamlit as st
-import pandas as pd
-import boto3
-from botocore.exceptions import NoCredentialsError, ClientError
-from dotenv import load_dotenv
-from pycaret.regression import load_model, predict_model
 from langfuse.openai import OpenAI
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-import seaborn as sns
+from dotenv import load_dotenv
 
-from utils import (
-    better_styling_css,
-    parse_time_to_seconds,
-    seconds_to_hms,
-    seconds_to_ms,
-    generate_pace_conversion_table,
-)
-
-# --- KONFIGURACJA I INICJALIZACJA ---
-
-# Ładowanie zmiennych środowiskowych z pliku .env
 load_dotenv()
 
-# Ustawienie stylu strony i tytułu
+# Inicjalizacja klienta OpenAI z Langfuse
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+    secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+)
+
+def parse_runner_data_with_llm(text_input: str) -> dict:
+    """Używa LLM do ekstrakcji i walidacji danych biegacza."""
+    
+    system_prompt = f"""
+    Twoim zadaniem jest precyzyjne wyekstrahowanie informacji o biegaczu z podanego tekstu.
+    Zwróć odpowiedź wyłącznie w formacie JSON. Nie dodawaj żadnych wyjaśnień ani dodatkowego tekstu.
+
+    Oczekiwany format wyjściowy JSON:
+    {{
+      "age": <liczba całkowita>,
+      "gender": <"M" lub "F">,
+      "time_5k_sec": <liczba zmiennoprzecinkowa>
+    }}
+
+    Zasady ekstrakcji i walidacji:
+    1.  **age**: Wiek musi być liczbą całkowitą z zakresu od 18 do 105.
+    2.  **gender**: Płeć musi być zmapowana na "M" (dla mężczyzny, m, male, facet itp.) lub "F" (dla kobiety, k, female, kobieta itp.).
+    3.  **time_5k_sec**:
+        -   Jeśli podano czas na 5km (np. "25:30", "25 min 30 sek"), przekonwertuj go na łączną liczbę sekund.
+        -   Jeśli podano tempo na 1km (np. "5'06''", "5:06/km", "tempo 5 minut 6 sekund"), najpierw przekonwertuj je na sekundy na kilometr, a następnie pomnóż przez 5, aby uzyskać czas na 5km w sekundach.
+        -   Wynikowy czas na 5km w sekundach musi być realistyczny. Zaakceptuj wartości od 900 sekund (15 minut) do 7200 sekund (120 minut).
+        -   Jeśli nie uda się wyekstrahować żadnej z tych informacji, zwróć `null` dla odpowiedniego pola.
+
+    Przykłady:
+    -   Tekst: "mam 35 lat, jestem kobietą, a moje 5km biegam w 28:15" -> {{"age": 35, "gender": "F", "time_5k_sec": 1695.0}}
+    -   Tekst: "mężczyzna, 42l. tempo na piątkę 5'30''" -> {{"age": 42, "gender": "M", "time_5k_sec": 1650.0}}
+    -   Tekst: "wiek 29, płeć M, czas 5km 21 minut" -> {{"age": 29, "gender": "M", "time_5k_sec": 1260.0}}
+    """
+    
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": text_input},
+            ],
+            temperature=0.0,
+            response_format={"type": "json_object"}
+        )
+        
+        response_json = json.loads(completion.choices[0].message.content)
+        
+        # Walidacja danych
+        age = response_json.get("age")
+        gender = response_json.get("gender")
+        time_5k_sec = response_json.get("time_5k_sec")
+
+        errors = []
+        if not (isinstance(age, int) and 18 <= age <= 105):
+            errors.append(f"Wiek ({age}) musi być liczbą całkowitą z zakresu 18-105.")
+        if gender not in ["M", "F"]:
+            errors.append(f"Płeć ({gender}) musi być rozpoznana jako 'M' lub 'F'.")
+        if not (isinstance(time_5k_sec, (int, float)) and 900 <= time_5k_sec <= 7200):
+             errors.append(f"Czas/Tempo na 5km musi być w realistycznym zakresie (15 - 120 minut). Otrzymano: {time_5k_sec/60:.2f} min.")
+        
+        if errors:
+            raise ValueError("Błędy walidacji: " + " ".join(errors))
+            
+        return {
+            "age": age,
+            "gender": gender,
+            "5_km_sec": float(time_5k_sec)
+        }
+
+    except json.JSONDecodeError:
+        raise ValueError("Model LLM zwrócił niepoprawny format JSON. Spróbuj sformułować dane inaczej.")
+    except Exception as e:
+        raise ValueError(f"Błąd podczas przetwarzania danych przez LLM: {e}")
+
+```
+
+#### Plik `utils.py`
+
+Zawiera funkcje pomocnicze, np. do formatowania czasu.
+
+```python
+# utils.py
+import pandas as pd
+
+def seconds_to_hms(seconds: float) -> str:
+    """Konwertuje sekundy na format HH:MM:SS."""
+    if seconds is None:
+        return "N/A"
+    seconds = int(seconds)
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    secs = seconds % 60
+    return f"{hours:02d}:{minutes:02d}:{secs:02d}"
+
+def seconds_to_ms(seconds: float) -> str:
+    """Konwertuje sekundy na format MM:SS."""
+    if seconds is None:
+        return "N/A"
+    seconds = int(seconds)
+    minutes = seconds // 60
+    secs = seconds % 60
+    return f"{minutes:02d}:{secs:02d}"
+
+def create_pace_conversion_table() -> pd.DataFrame:
+    """Tworzy tabelę konwersji tempa na prędkość."""
+    paces_min_sec = []
+    for minutes in range(3, 11):
+        for seconds in [0, 15, 30, 45]:
+            paces_min_sec.append(f"{minutes}:{seconds:02d}")
+
+    data = []
+    for pace_str in paces_min_sec:
+        minutes, seconds = map(int, pace_str.split(':'))
+        total_seconds_per_km = minutes * 60 + seconds
+        speed_kmh = 3600 / total_seconds_per_km
+        data.append({"Tempo (min:sek/km)": pace_str, "Prędkość (km/h)": f"{speed_kmh:.2f}"})
+    
+    return pd.DataFrame(data)
+```
+
+#### Plik `app.py`
+
+Główny plik aplikacji, który łączy wszystkie elementy.
+
+```python
+# app.py
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from pycaret.regression import predict_model
+
+# Importy z lokalnych modułów
+from s3_utils import get_s3_client, load_csv_from_s3, get_prediction_model
+from llm_parser import parse_runner_data_with_llm
+from utils import seconds_to_hms, seconds_to_ms, create_pace_conversion_table
+
+# --- Konfiguracja strony i stanu ---
 st.set_page_config(page_title="Prognoza Czasu w Półmaratonie", layout="wide")
-better_styling_css()
 
-# Inicjalizacja klienta OpenAI
-try:
-    client_openai = OpenAI()
-except Exception as e:
-    st.error(f"Nie udało się zainicjować klienta OpenAI. Sprawdź klucz API. Błąd: {e}")
-    client_openai = None
-
-# Konfiguracja S3
-S3_BUCKET_NAME = 'wk1'
-MODEL_PATH = 'zadanie_9/models/time_sec_model'
-DATA_PATH_TEMPLATE = 'zadanie_9/current/halfmarathon_wroclaw_{}__final_cleaned_full.csv'
-
-# Inicjalizacja stanu sesji (kluczowe do nawigacji i przechowywania danych)
+# Inicjalizacja stanu sesji
 if 'page' not in st.session_state:
     st.session_state.page = 'input'
 if 'history' not in st.session_state:
@@ -182,415 +305,245 @@ if 'runner_data' not in st.session_state:
 if 'predicted_time_sec' not in st.session_state:
     st.session_state.predicted_time_sec = None
 if 'current_input' not in st.session_state:
-    st.session_state.current_input = ""
+    st.session_state.current_input = "Np. mężczyzna, 35 lat, czas na 5km 25:30"
 
 
-# --- FUNKCJE CACHE'OWANE ---
-
-@st.cache_data
-def get_pace_table():
-    """Pobiera tabelę konwersji tempa (cache'owana)."""
-    return generate_pace_conversion_table()
-
-@st.cache_data(ttl=3600)  # Cache na 1 godzinę
-def get_s3_client():
-    """Tworzy i zwraca klienta S3, obsługując błędy."""
-    try:
-        s3 = boto3.client(
-            's3',
-            aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-            aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-            region_name=os.getenv("AWS_REGION")
-        )
-        # Sprawdzenie, czy wiadro istnieje
-        s3.head_bucket(Bucket=S3_BUCKET_NAME)
-        return s3
-    except NoCredentialsError:
-        st.error("Błąd: Brak danych uwierzytelniających AWS. Sprawdź plik .env.")
-        return None
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchBucket':
-            st.error(f"Błąd: Wiadro S3 '{S3_BUCKET_NAME}' nie istnieje.")
-        else:
-            st.error(f"Błąd połączenia z S3: {e}")
-        return None
-
-@st.cache_data(ttl=3600)
-def load_prediction_model(_s3_client, bucket, key):
-    """Pobiera model z S3 i ładuje go za pomocą PyCaret."""
-    if _s3_client is None:
-        return None
-    local_model_path = "time_sec_model"
-    try:
-        _s3_client.download_file(bucket, f"{key}.pkl", f"{local_model_path}.pkl")
-        model = load_model(local_model_path)
-        os.remove(f"{local_model_path}.pkl")  # Sprzątanie po załadowaniu
-        return model
-    except ClientError as e:
-        st.error(f"Nie można pobrać modelu z S3 (ścieżka: {key}). Błąd: {e}")
-        return None
-    except Exception as e:
-        st.error(f"Błąd podczas ładowania modelu PyCaret: {e}")
-        return None
-
-@st.cache_data(ttl=3600)
-def load_marathon_data(_s3_client, bucket, key):
-    """Pobiera dane historyczne z pliku CSV z S3."""
-    if _s3_client is None:
-        return None
-    try:
-        obj = _s3_client.get_object(Bucket=bucket, Key=key)
-        df = pd.read_csv(obj['Body'])
-        # Konwersja potrzebnych kolumn na typ numeryczny
-        df['age'] = pd.to_numeric(df['age'], errors='coerce')
-        df['time_sec'] = pd.to_numeric(df['time_sec'], errors='coerce')
-        df.dropna(subset=['age', 'time_sec'], inplace=True)
-        return df
-    except ClientError as e:
-        st.error(f"Nie można załadować danych historycznych z S3 (ścieżka: {key}). Błąd: {e}")
-        return None
-    except Exception as e:
-        st.error(f"Błąd podczas przetwarzania pliku CSV: {e}")
-        return None
-
-
-# --- FUNKCJE LOGIKI APLIKACJI ---
-
-def extract_runner_data_with_llm(text_input):
-    """Używa LLM do ekstrakcji danych z tekstu."""
-    if not client_openai:
-        st.error("Klient OpenAI nie jest dostępny.")
-        return None
-
-    prompt = f"""
-    Przeanalizuj poniższy tekst wprowadzony przez użytkownika i wyekstrahuj następujące informacje:
-    1. Wiek (age): jako liczba całkowita.
-    2. Płeć (gender): jako "M" dla mężczyzny lub "F" dla kobiety.
-    3. Czas na 5 km (time_5k) LUB Tempo na 5 km (pace_5k): w formacie "MM:SS" lub "M:SS".
-
-    Tekst użytkownika: "{text_input}"
-
-    Zwróć odpowiedź w formacie JSON. Jeśli brakuje jakiejś informacji, ustaw jej wartość na null.
-    Przykłady:
-    - Tekst: "Mam 35 lat, jestem kobietą, a moje 5km to 25:30." -> {{"age": 35, "gender": "F", "time_5k": "25:30", "pace_5k": null}}
-    - Tekst: "m, 42l, tempo 5'10''" -> {{"age": 42, "gender": "M", "time_5k": null, "pace_5k": "05:10"}}
-    - Tekst: "28 lat, czas 5km 22 min 15 sek" -> {{"age": 28, "gender": null, "time_5k": "22:15", "pace_5k": null}}
-
-    JSON:
-    """
-    try:
-        response = client_openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            response_format={"type": "json_object"},
-        )
-        data = json.loads(response.choices[0].message.content)
-        return data
-    except Exception as e:
-        st.error(f"Błąd podczas komunikacji z modelem językowym: {e}")
-        return None
-
-def process_and_validate_data(data):
-    """Waliduje i przetwarza dane wyekstrahowane przez LLM."""
-    errors = []
-    validated_data = {}
-
-    # Wiek
-    age = data.get('age')
-    if age is None:
-        errors.append("Nie udało się rozpoznać wieku.")
-    elif not (isinstance(age, int) and 18 <= age <= 105):
-        errors.append(f"Wiek musi być liczbą całkowitą od 18 do 105 (wykryto: {age}).")
-    else:
-        validated_data['age'] = age
-
-    # Płeć
-    gender = str(data.get('gender')).upper()
-    if gender not in ['M', 'F']:
-        errors.append(f"Nie udało się rozpoznać płci jako 'M' lub 'F' (wykryto: {data.get('gender')}).")
-    else:
-        validated_data['gender'] = gender
-
-    # Czas/Tempo na 5 km
-    time_5k = data.get('time_5k')
-    pace_5k = data.get('pace_5k')
-    total_seconds = None
-
-    if time_5k:
-        total_seconds = parse_time_to_seconds(time_5k)
-    elif pace_5k:
-        pace_seconds = parse_time_to_seconds(pace_5k)
-        if pace_seconds:
-            total_seconds = pace_seconds * 5
-    
-    if total_seconds is None:
-        errors.append("Nie udało się rozpoznać czasu ani tempa na 5 km. Użyj formatu MM:SS lub MM'SS''.")
-    elif not (15 * 60 <= total_seconds <= 120 * 60):
-        errors.append(f"Czas na 5 km ({seconds_to_ms(total_seconds)}) jest poza realistycznym zakresem (15:00 - 120:00).")
-    else:
-        validated_data['5_km_sec'] = total_seconds
-
-    return validated_data, errors
-
-def plot_results_distribution(df_history, user_age, user_time_sec, user_gender, filter_by_gender=False):
-    """Tworzy wykres rozrzutu z wynikami historycznymi i pozycją użytkownika."""
-    
-    df_filtered = df_history.copy()
-    if filter_by_gender:
-        df_filtered = df_filtered[df_filtered['gender'] == user_gender]
-
-    if df_filtered.empty:
-        st.warning("Brak danych historycznych dla wybranej płci.")
-        return None, None, None
-
-    # Obliczanie miejsca
-    faster_runners = df_filtered[df_filtered['time_sec'] < user_time_sec].shape[0]
-    rank = faster_runners + 1
-    total_runners = len(df_filtered)
-
-    # Tworzenie wykresu
-    fig, ax = plt.subplots(figsize=(10, 6))
-    
-    # Wykres rozrzutu dla danych historycznych
-    sns.scatterplot(
-        data=df_filtered, x='age', y='time_sec', ax=ax,
-        alpha=0.3, label='Pozostali uczestnicy', s=20
-    )
-    
-    # Punkt użytkownika
-    ax.scatter(
-        user_age, user_time_sec, color='red', s=150,
-        edgecolor='black', zorder=5, label='Twój przewidywany wynik'
-    )
-    
-    # Stylizacja
-    ax.set_title(f"Rozkład wyników Półmaratonu Wrocławskiego (n={total_runners})", fontsize=16)
-    ax.set_xlabel("Wiek", fontsize=12)
-    ax.set_ylabel("Czas ukończenia", fontsize=12)
-    ax.legend()
-    ax.grid(True, which='both', linestyle='--', linewidth=0.5)
-
-    # Formatowanie osi Y na czas HH:MM:SS
-    ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda s, _: seconds_to_hms(s)))
-    
-    plt.tight_layout()
-    return fig, rank, total_runners
-
-# --- WIDOKI (STRONY) APLIKACJI ---
+# --- Funkcje renderujące widoki (strony) ---
 
 def render_input_page():
-    """Strona 1: Wprowadzanie danych."""
-    st.title("Krok 1: Wprowadź swoje dane")
-    
-    # --- Historia ---
-    st.subheader("Historia wpisów")
-    if not st.session_state.history:
-        st.info("Brak wpisów w historii.")
-    
-    cols = st.columns([1, 1, 2, 2])
-    
-    with cols[0]:
-        if st.button("Poprzedni", disabled=st.session_state.history_index <= 0):
-            st.session_state.history_index -= 1
-            st.session_state.current_input = st.session_state.history[st.session_state.history_index]
-            st.rerun()
+    st.title("🏃 Prognoza Czasu w Półmaratonie")
+    st.header("Krok 1: Wprowadź swoje dane")
 
-    with cols[1]:
-        if st.button("Następny", disabled=st.session_state.history_index >= len(st.session_state.history) - 1):
-            st.session_state.history_index += 1
-            st.session_state.current_input = st.session_state.history[st.session_state.history_index]
-            st.rerun()
-            
-    with cols[2]:
-        if st.button("Wyczyść bieżący wpis"):
-            st.session_state.current_input = ""
-            st.rerun()
+    tab1, tab2 = st.tabs(["Wprowadzanie danych", "Tabela konwersji tempa"])
 
-    with cols[3]:
-        if st.button("Usuń wpis z historii", type="primary", disabled=st.session_state.history_index == -1):
-            del st.session_state.history[st.session_state.history_index]
-            if st.session_state.history:
-                st.session_state.history_index = min(st.session_state.history_index, len(st.session_state.history) - 1)
-                if st.session_state.history_index > -1:
-                    st.session_state.current_input = st.session_state.history[st.session_state.history_index]
-                else:
-                    st.session_state.current_input = ""
-            else:
-                st.session_state.history_index = -1
-                st.session_state.current_input = ""
-            st.rerun()
-
-    # --- Główny formularz i tabela konwersji ---
-    tab1, tab2 = st.tabs(["Formularz", "Tabela konwersji tempa"])
+    with tab2:
+        st.subheader("Tabela Konwersji Tempo ↔ Prędkość")
+        st.dataframe(create_pace_conversion_table(), use_container_width=True, hide_index=True)
 
     with tab1:
-        st.info("Opisz siebie w polu poniżej. Podaj swój wiek, płeć oraz czas lub tempo na 5 km.")
-        input_text = st.text_area(
-            "Dane biegacza:",
-            value=st.session_state.current_input,
-            key="user_input_text_area",
-            height=150,
-            placeholder="Np. 'Jestem mężczyzną w wieku 35 lat, a mój najlepszy czas na 5 km to 24:15.'\n"
-                        "lub 'K, 28 lat, tempo na 5km 5'20\"'"
-        )
-        st.session_state.current_input = input_text
+        # --- Sekcja historii ---
+        st.subheader("Historia wpisów")
+        if not st.session_state.history:
+            st.info("Brak wpisów w historii.")
+        
+        cols = st.columns([1, 1, 1, 1, 5])
+        with cols[0]:
+            if st.button("⬅️ Poprzedni", disabled=st.session_state.history_index <= 0):
+                st.session_state.history_index -= 1
+                st.session_state.current_input = st.session_state.history[st.session_state.history_index]
+                st.rerun()
 
-        if st.button("Dalej", type="primary"):
-            if not input_text.strip():
+        with cols[1]:
+            if st.button("➡️ Następny", disabled=st.session_state.history_index >= len(st.session_state.history) - 1):
+                st.session_state.history_index += 1
+                st.session_state.current_input = st.session_state.history[st.session_state.history_index]
+                st.rerun()
+        
+        with cols[2]:
+            if st.button("🗑️ Usuń", disabled=st.session_state.history_index == -1):
+                st.session_state.history.pop(st.session_state.history_index)
+                if st.session_state.history_index >= len(st.session_state.history):
+                    st.session_state.history_index = len(st.session_state.history) - 1
+                if st.session_state.history_index == -1:
+                    st.session_state.current_input = "Np. mężczyzna, 35 lat, czas na 5km 25:30"
+                else:
+                    st.session_state.current_input = st.session_state.history[st.session_state.history_index]
+                st.rerun()
+        
+        with cols[3]:
+            if st.button("🧹 Wyczyść"):
+                st.session_state.current_input = ""
+                st.rerun()
+
+        # --- Pole wprowadzania danych ---
+        st.subheader("Opisz siebie i swoje wyniki")
+        st.session_state.current_input = st.text_area(
+            "Podaj swój wiek, płeć oraz czas na 5km lub tempo biegu.",
+            value=st.session_state.current_input,
+            height=100,
+            key="runner_input_area"
+        )
+        
+        if st.button("Dalej ➡️", type="primary", use_container_width=True):
+            user_input = st.session_state.current_input
+            if not user_input or user_input == "Np. mężczyzna, 35 lat, czas na 5km 25:30":
                 st.warning("Proszę wprowadzić dane.")
                 return
 
-            with st.spinner("Przetwarzanie danych..."):
-                extracted_data = extract_runner_data_with_llm(input_text)
-                if extracted_data:
-                    validated_data, errors = process_and_validate_data(extracted_data)
-                    if errors:
-                        for error in errors:
-                            st.error(error)
-                    else:
-                        st.session_state.runner_data = validated_data
-                        # Dodaj do historii, jeśli to nowy wpis
-                        if input_text not in st.session_state.history:
-                            st.session_state.history.append(input_text)
-                            st.session_state.history_index = len(st.session_state.history) - 1
-                        st.session_state.page = 'summary'
-                        st.rerun()
+            with st.spinner("Przetwarzanie danych przy użyciu AI..."):
+                try:
+                    parsed_data = parse_runner_data_with_llm(user_input)
+                    st.session_state.runner_data = parsed_data
+                    
+                    # Dodaj do historii, jeśli to nowy wpis
+                    if user_input not in st.session_state.history:
+                        st.session_state.history.append(user_input)
+                    st.session_state.history_index = st.session_state.history.index(user_input)
 
-    with tab2:
-        st.subheader("Konwersja tempa (min/km) na prędkość (km/h)")
-        st.dataframe(get_pace_table(), use_container_width=True, hide_index=True)
+                    st.session_state.page = 'summary'
+                    st.rerun()
+                except ValueError as e:
+                    st.error(f"Błąd przetwarzania: {e}")
+                except Exception as e:
+                    st.error(f"Wystąpił nieoczekiwany błąd: {e}")
 
 def render_summary_page():
-    """Strona 2: Podsumowanie i przycisk predykcji."""
-    st.title("Krok 2: Podsumowanie danych")
-    
-    data = st.session_state.runner_data
-    if not data:
-        st.warning("Brak danych biegacza. Wróć do kroku 1.")
-        if st.button("Powrót"):
-            st.session_state.page = 'input'
-            st.rerun()
-        return
+    st.title("📊 Podsumowanie i Predykcja")
+    st.header("Krok 2: Sprawdź dane i oszacuj czas")
 
-    gender_str = "Kobieta" if data['gender'] == 'F' else "Mężczyzna"
-    
-    st.subheader("Zweryfikowane dane:")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Wiek", f"{data['age']} lat")
-    col2.metric("Płeć", gender_str)
-    col3.metric("Czas na 5 km", seconds_to_ms(data['5_km_sec']))
-
-    st.markdown("---")
-
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        if st.button("Powrót do wprowadzania danych"):
-            st.session_state.page = 'input'
-            st.rerun()
-    with col_btn2:
-        if st.button("Oszacuj czas w półmaratonie", type="primary"):
-            with st.spinner("Ładowanie modelu i wykonywanie predykcji..."):
-                s3 = get_s3_client()
-                if s3:
-                    model = load_prediction_model(s3, S3_BUCKET_NAME, MODEL_PATH)
+    if st.session_state.runner_data:
+        data = st.session_state.runner_data
+        gender_full = "Kobieta" if data['gender'] == 'F' else "Mężczyzna"
+        
+        st.subheader("Twoje dane:")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Wiek", f"{data['age']} lat")
+        col2.metric("Płeć", gender_full)
+        col3.metric("Czas na 5km", seconds_to_ms(data['5_km_sec']))
+        
+        cols = st.columns([1, 2, 1])
+        with cols[0]:
+            if st.button("⬅️ Wróć do edycji"):
+                st.session_state.page = 'input'
+                st.rerun()
+        
+        with cols[1]:
+            if st.button("🚀 Oszacuj czas w półmaratonie", type="primary", use_container_width=True):
+                with st.spinner("Ładowanie modelu i wykonywanie predykcji..."):
+                    model = get_prediction_model()
                     if model:
                         input_df = pd.DataFrame([data])
                         prediction = predict_model(model, data=input_df)
-                        predicted_seconds = prediction['prediction_label'].iloc[0]
-                        st.session_state.predicted_time_sec = predicted_seconds
+                        st.session_state.predicted_time_sec = prediction['prediction_label'].iloc[0]
                         st.session_state.page = 'results'
                         st.rerun()
                     else:
-                        st.error("Nie udało się załadować modelu predykcyjnego.")
-                else:
-                    st.error("Nie udało się połączyć z S3.")
+                        st.error("Nie udało się załadować modelu. Predykcja niemożliwa.")
+
+    else:
+        st.warning("Brak danych biegacza. Wróć do strony głównej.")
+        if st.button("⬅️ Wróć na stronę główną"):
+            st.session_state.page = 'input'
+            st.rerun()
 
 def render_results_page():
-    """Strona 3: Wyniki i wizualizacja."""
-    st.title("Krok 3: Wyniki prognozy")
-    
-    if st.session_state.predicted_time_sec is None or st.session_state.runner_data is None:
-        st.warning("Brak wyników predykcji. Wróć do strony głównej.")
-        if st.button("Powrót do strony głównej"):
-            st.session_state.page = 'input'
+    st.title("🏆 Wyniki Predykcji")
+    st.header("Krok 3: Analiza Twojego potencjalnego wyniku")
+
+    if st.session_state.predicted_time_sec is None:
+        st.error("Brak przewidywanego czasu. Wróć do kroku 2.")
+        if st.button("⬅️ Wróć"):
+            st.session_state.page = 'summary'
             st.rerun()
         return
 
     predicted_time_hms = seconds_to_hms(st.session_state.predicted_time_sec)
-    st.success(f"**Twój przewidywany czas w półmaratonie to:**")
-    st.metric(label="Przewidywany czas", value=predicted_time_hms)
-
+    st.subheader("Przewidywany czas ukończenia półmaratonu:")
+    st.metric("Twój szacowany czas", predicted_time_hms)
+    
     st.markdown("---")
-    st.subheader("Twoja pozycja względem historycznych wyników")
+    st.subheader("Gdzie plasowałbyś/plasowałabyś się w Półmaratonie Wrocławskim?")
 
-    s3 = get_s3_client()
-    if not s3:
-        st.error("Nie można wyświetlić wizualizacji z powodu problemów z połączeniem S3.")
+    tabs = st.tabs(["Wyniki 2024", "Wyniki 2023"])
+    years = [2024, 2023]
+
+    s3_client = get_s3_client()
+    if not s3_client:
+        st.error("Nie można wyświetlić wizualizacji z powodu problemu z połączeniem S3.")
         return
 
-    tabs = st.tabs(["Półmaraton Wrocławski 2024", "Półmaraton Wrocławski 2023"])
-    years = [2024, 2023]
-    
     for i, tab in enumerate(tabs):
         with tab:
             year = years[i]
-            data_key = DATA_PATH_TEMPLATE.format(year)
-            df_history = load_marathon_data(s3, S3_BUCKET_NAME, data_key)
+            file_key = f"zadanie_9/current/halfmarathon_wroclaw_{year}__final_cleaned_full.csv"
+            
+            with st.spinner(f"Ładowanie danych historycznych za rok {year}..."):
+                hist_data = load_csv_from_s3(s3_client, file_key)
 
-            if df_history is not None:
-                filter_choice = st.radio(
-                    f"Porównaj z:",
-                    options=["Wszystkimi biegaczami", "Tylko biegaczami tej samej płci"],
-                    key=f"radio_{year}",
-                    horizontal=True
-                )
-                
-                filter_gender = (filter_choice == "Tylko biegaczami tej samej płci")
+            if hist_data is None:
+                st.warning(f"Nie udało się załadować danych dla roku {year}.")
+                continue
 
-                fig, rank, total = plot_results_distribution(
-                    df_history,
-                    st.session_state.runner_data['age'],
-                    st.session_state.predicted_time_sec,
-                    st.session_state.runner_data['gender'],
-                    filter_by_gender=filter_gender
-                )
-                
-                if fig:
-                    st.pyplot(fig)
-                    st.info(f"**Twoje szacowane miejsce w tej grupie:** **{rank}** na **{total}** uczestników.")
-                else:
-                    st.warning(f"Nie można wygenerować wykresu dla roku {year}.")
-            else:
-                st.warning(f"Brak danych historycznych dla roku {year}.")
+            gender_filter = st.radio(
+                "Pokaż wyniki dla:",
+                ("Wszystkich", "Tylko mojej płci"),
+                key=f"gender_filter_{year}",
+                horizontal=True
+            )
 
-    if st.button("Powrót do strony głównej"):
-        # Resetowanie stanu dla nowego cyklu
+            filtered_data = hist_data.copy()
+            user_gender = st.session_state.runner_data['gender']
+            if gender_filter == "Tylko mojej płci":
+                filtered_data = hist_data[hist_data['gender'] == user_gender]
+
+            # Obliczanie miejsca
+            user_time = st.session_state.predicted_time_sec
+            faster_runners = filtered_data[filtered_data['time_sec'] < user_time].shape[0]
+            total_runners = len(filtered_data)
+            user_rank = faster_runners + 1
+
+            st.metric(
+                label=f"Szacowane miejsce w {year} ({gender_filter.lower()})",
+                value=f"{user_rank} / {total_runners + 1}"
+            )
+
+            # Wizualizacja
+            st.write("#### Rozkład wyników wg wieku")
+            fig, ax = plt.subplots(figsize=(12, 7))
+            sns.scatterplot(
+                data=filtered_data,
+                x='age',
+                y='time_sec',
+                alpha=0.3,
+                label='Pozostali uczestnicy',
+                ax=ax
+            )
+            
+            user_age = st.session_state.runner_data['age']
+            ax.scatter(
+                [user_age], [user_time],
+                color='red',
+                s=200,
+                edgecolor='black',
+                marker='*',
+                label='Twój przewidywany wynik'
+            )
+            
+            ax.set_title(f"Wyniki Półmaratonu Wrocławskiego {year} vs Twój wynik")
+            ax.set_xlabel("Wiek")
+            ax.set_ylabel("Czas ukończenia (sekundy)")
+            ax.legend()
+            plt.grid(True, linestyle='--', alpha=0.6)
+            
+            # Konwersja y-tick na format MM:SS
+            ax.set_yticklabels([seconds_to_hms(int(s)) for s in ax.get_yticks()])
+
+            st.pyplot(fig)
+            plt.close(fig)
+
+    if st.button("🏁 Rozpocznij od nowa"):
+        # Reset kluczowych stanów
         st.session_state.page = 'input'
         st.session_state.runner_data = None
         st.session_state.predicted_time_sec = None
         st.rerun()
 
-# --- GŁÓWNA LOGIKA NAWIGACJI ---
 
+# --- Główny router aplikacji ---
 if st.session_state.page == 'input':
     render_input_page()
 elif st.session_state.page == 'summary':
     render_summary_page()
 elif st.session_state.page == 'results':
     render_results_page()
+
 ```
 
 ### Jak uruchomić aplikację?
 
-1.  Upewnij się, że masz poprawnie skonfigurowany plik `.env` z kluczami API i dostępem do AWS.
-2.  Zainstaluj wszystkie pakiety z pliku `requirements.txt`:
-    ```bash
-    pip install -r requirements.txt
-    ```
-3.  Uruchom aplikację Streamlit z terminala w głównym folderze projektu:
-    ```bash
-    streamlit run app.py
-    ```
+1.  Upewnij się, że wszystkie pliki (`.env`, `app.py`, `llm_parser.py`, `s3_utils.py`, `utils.py`, `requirements.txt`) znajdują się w tym samym katalogu.
+2.  Zainstaluj zależności: `pip install -r requirements.txt`.
+3.  Wypełnij plik `.env` swoimi kluczami dostępu.
+4.  Uruchom aplikację z terminala za pomocą polecenia: `streamlit run app.py`.
 
-Aplikacja otworzy się w przeglądarce, gotowa do użycia. Użytkownik będzie mógł przechodzić przez kolejne kroki, a aplikacja będzie zarządzać stanem i danymi zgodnie z podanymi wytycznymi.
+Aplikacja uruchomi się w przeglądarce, prowadząc użytkownika przez trzyetapowy proces: od wprowadzenia danych, przez ich weryfikację i predykcję, aż po wizualizację wyników na tle historycznych danych.
