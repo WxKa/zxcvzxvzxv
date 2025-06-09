@@ -1,6 +1,6 @@
 # zxcvzxvzxv
 
-Strona jest w trakcie modernizacji.
+Strona nie będzie już rozwijana, temat został wyczerpany.
 
 #### Zaczynamy od początku, pierwszy prompt:
 
