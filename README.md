@@ -1,8 +1,6 @@
 # zxcvzxvzxv
 
-### To nie tej strony szukałeś, coś pokręciłeś ...
-
-Jeśli trafiłeś tu z jakiejś wyszukiwarki to zgłoś błąd.
+Strona jest w trakcie modernizacji.
 
 #### Zaczynamy od początku, pierwszy prompt:
 
