@@ -16,4 +16,4 @@
 - do S3 i tak dopisał credentiale więc kasujemy,
 - zmieniłem odwołania do kolumny za pomocą 'time_sec' na 'finish_sec', bo tak ją nazwałem w swoim w csv,
 
-###### sprawdzam nieodebrane ... i to samo co przedtem ... no wiem, że mam poprawić, tu na time_sec.
+###### cenzura.
