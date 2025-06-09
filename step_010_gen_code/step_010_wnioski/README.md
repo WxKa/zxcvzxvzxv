@@ -1,8 +1,4 @@
 
-chyba jest już pierwszy wniosek w tym rozdziale,
+Wyniki przeszły najśmielsze oczekiwania, zarówno **Anthropic Claude Sonnet 4** jak i **Google Gemini 2.5 Pro** generują perfekcyjne kody dla prostych aplikacji streamlit.
 
-do promptów trzeba dodać:
-
-python 3.11
-csv sep=';'
-nie podawaj credentials do s3 client create
+Ale żeby było sprawiedliwie damy szansę wykazać się jeszcze gpt-4o, na zasadzie 'Co tam słychać w Państwie - Panie Prezydencie ?
