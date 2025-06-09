@@ -8,7 +8,7 @@
  - csv sep =';'
  - nie dopisuj credentials do s3 client create
 
-### kod się wygenerował i jest <span style="color: red;">BARDZO DOBRZE</span>
+# kod się wygenerował i jest <span style="color: red;">BARDZO DOBRZE</span>
 
 ##### żeby działało, i żeby nie przedłużać, zrobiłem poprawki na żywca w wygenerownym app.py:
 - do prompta do gpt dodałem:
